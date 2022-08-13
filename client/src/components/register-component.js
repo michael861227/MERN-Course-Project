@@ -9,6 +9,7 @@ const RegisterComponent = () => {
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
   let [role, setRole] = useState("");
+  let [message, setMessage] = useState("");
 
   const handleChangeUsername = (e) => {
     setUsername(e.target.value);
@@ -36,12 +37,14 @@ const RegisterComponent = () => {
       })
       .catch((error) => {
         console.log(error.response);
+        setMessage(error.response.data);
       });
   };
 
   return (
     <div style={{ padding: "3rem" }} className="col-md-12">
       <div>
+        {message && <div className="alert alert-danger">{message}</div>}
         <div>
           <label htmlFor="username">Username</label>
           <input
