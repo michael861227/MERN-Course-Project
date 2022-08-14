@@ -18,13 +18,25 @@ function CourseComponent(props) {
     } else {
       _id = "";
     }
-    CourseService.get(_id)
-      .then((data) => {
-        setCourseData(data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+
+    if (currentUser.user.role == "instructor") {
+      CourseService.get(_id)
+        .then((data) => {
+          setCourseData(data.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else if (currentUser.user.role == "student") {
+      CourseService.getEnrolledCourses(_id)
+        .then((data) => {
+          console.log(data);
+          setCourseData(data.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }, []);
 
   return (
@@ -45,6 +57,11 @@ function CourseComponent(props) {
           <h1>Welcome to Instructor's Course Page</h1>
         </div>
       )}
+      {currentUser && currentUser.user.role == "student" && (
+        <div>
+          <h1>Welcome to Student's Course Page</h1>
+        </div>
+      )}
       {currentUser && courseData && courseData.length != 0 && (
         <div>
           <p>Here's the data we got back from server</p>
@@ -61,11 +78,6 @@ function CourseComponent(props) {
               </div>
             </div>
           ))}
-        </div>
-      )}
-      {currentUser && currentUser.user.role == "student" && (
-        <div>
-          <h1>Welcome to Student's Course Page</h1>
         </div>
       )}
     </div>
