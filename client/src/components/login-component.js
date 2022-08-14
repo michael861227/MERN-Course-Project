@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import AuthService from "../services/auth.service";
 
 const LoginComponent = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
   let [message, setMessage] = useState("");
@@ -12,6 +12,22 @@ const LoginComponent = () => {
   };
   const handleChangePassword = (e) => {
     setPassword(e.target.value);
+  };
+
+  const handleLogin = () => {
+    AuthService.login(email, password)
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.token) {
+          localStorage.setItem("user", JSON.stringify(response.data));
+        }
+
+        navigate("/profile");
+      })
+      .catch((error) => {
+        console.log(error.response);
+        setMessage(error.response.data);
+      });
   };
 
   return (
@@ -43,7 +59,7 @@ const LoginComponent = () => {
         </div>
         <br />
         <div className="form-group">
-          <button className="btn btn-primary btn-block">
+          <button onClick={handleLogin} className="btn btn-primary btn-block">
             <span>Login</span>
           </button>
         </div>
